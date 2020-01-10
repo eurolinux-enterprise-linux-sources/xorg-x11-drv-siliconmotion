@@ -4,8 +4,8 @@
 
 Summary:    Xorg X11 siliconmotion video driver
 Name:       xorg-x11-drv-siliconmotion
-Version:    1.7.5
-Release:    1%{?dist}
+Version:    1.7.7
+Release:    2%{?dist}
 URL:        http://www.x.org
 License:    MIT
 Group:      User Interface/X Hardware Support
@@ -54,6 +54,12 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/siliconmotion.4*
 
 %changelog
+* Wed Aug 22 2012 airlied@redhat.com - 1.7.7-2
+- rebuild for server ABI requires
+
+* Wed Aug 08 2012 Ben Skeggs <bskeggs@redhat.com> 1.7.7-1
+- upstream release 1.7.7 (rebase for 6.4)
+
 * Tue Jun 28 2011 Ben Skeggs <bskeggs@redhat.com> 1.7.5-1
 - upstream release 1.7.5
 
