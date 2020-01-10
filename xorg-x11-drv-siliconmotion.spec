@@ -5,40 +5,40 @@
 Summary:    Xorg X11 siliconmotion video driver
 Name:       xorg-x11-drv-siliconmotion
 Version:    1.7.7
-Release:    2%{?dist}
+Release:    9%{?dist}
 URL:        http://www.x.org
 License:    MIT
 Group:      User Interface/X Hardware Support
-BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 Source0:    ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
-Source1:    siliconmotion.xinf
+Source2:    make-git-snapshot.sh
+Source3:    commitid
+
+Patch0: 0001-Remove-miInitializeBackingStore.patch
 
 ExcludeArch: s390 s390x
 
-BuildRequires: xorg-x11-server-sdk >= 1.3.0.0-6
+BuildRequires: xorg-x11-server-devel >= 1.10.99.902
 
-Requires:  hwdata
-Requires:  Xorg %(xserver-sdk-abi-requires ansic)
-Requires:  Xorg %(xserver-sdk-abi-requires videodrv)
+Requires: Xorg %(xserver-sdk-abi-requires ansic)
+Requires: Xorg %(xserver-sdk-abi-requires videodrv)
 
 %description 
 X.Org X11 siliconmotion video driver.
 
 %prep
 %setup -q -n %{tarball}-%{version}
+%patch0 -p1
 
 %build
+autoreconf -f -v --install || exit 1
 %configure --disable-static
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 make install DESTDIR=$RPM_BUILD_ROOT
-
-mkdir -p $RPM_BUILD_ROOT%{_datadir}/hwdata/videoaliases
-install -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_datadir}/hwdata/videoaliases/
 
 # FIXME: Remove all libtool archives (*.la) from modules directory.  This
 # should be fixed in upstream Makefile.am or whatever.
@@ -50,21 +50,90 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %{driverdir}/siliconmotion_drv.so
-%{_datadir}/hwdata/videoaliases/siliconmotion.xinf
 %{_mandir}/man4/siliconmotion.4*
 
 %changelog
-* Wed Aug 22 2012 airlied@redhat.com - 1.7.7-2
-- rebuild for server ABI requires
+* Mon Apr 28 2014 Adam Jackson <ajax@redhat.com> - 1.7.7-9
+- Fix rhel arch list
 
-* Wed Aug 08 2012 Ben Skeggs <bskeggs@redhat.com> 1.7.7-1
-- upstream release 1.7.7 (rebase for 6.4)
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.7-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-* Tue Jun 28 2011 Ben Skeggs <bskeggs@redhat.com> 1.7.5-1
-- upstream release 1.7.5
+* Thu Mar 07 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.7-7
+- require xorg-x11-server-devel, not -sdk
 
-* Mon Nov 30 2009 Dennis Gregorovic <dgregor@redhat.com> - 1.7.3-1.1
-- Rebuilt for RHEL 6
+* Thu Mar 07 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.7-6
+- ABI rebuild
+
+* Fri Feb 15 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.7-5
+- ABI rebuild
+
+* Fri Feb 15 2013 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.7-4
+- ABI rebuild
+
+* Thu Jan 10 2013 Adam Jackson <ajax@redhat.com> - 1.7.7-3
+- ABI rebuild
+
+* Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.7-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
+* Wed Jul 18 2012 Dave Airlie <airlied@redhat.com> 1.7.7-1
+- siliconmotion 1.7.7
+
+* Fri Apr 27 2012 Adam Jackson <ajax@redhat.com> 1.7.6-1
+- siliconmotion 1.7.6
+
+* Thu Apr 05 2012 Adam Jackson <ajax@redhat.com> - 1.7.5-10
+- RHEL arch exclude updates
+
+* Sat Feb 11 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.5-9
+- ABI rebuild
+
+* Fri Feb 10 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.5-8
+- ABI rebuild
+
+* Tue Jan 24 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.5-7
+- ABI rebuild
+
+* Wed Jan 04 2012 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.5-6
+- Rebuild for server 1.12
+
+* Fri Dec 16 2011 Adam Jackson <ajax@redhat.com> - 1.7.5-5
+- Drop xinf file
+
+* Wed Nov 16 2011 Adam Jackson <ajax@redhat.com> 1.7.5-4
+- ABI rebuild
+- smi-1.7.5-vga.patch: Adapt to videoabi 12
+
+* Thu Aug 18 2011 Adam Jackson <ajax@redhat.com> - 1.7.5-2
+- Rebuild for xserver 1.11 ABI
+
+* Tue Jun 21 2011 Adam Jackson <ajax@redhat.com> 1.7.5-1
+- siliconmotion 1.7.5
+
+* Wed May 11 2011 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.3-9.20100122
+- Rebuild for server 1.11
+
+* Mon Feb 28 2011 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.3-8.20100122
+- Rebuild for server 1.10
+
+* Tue Feb 08 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.7.3-7.20100122
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
+* Thu Dec 02 2010 Adam Jackson <ajax@redhat.com> 1.7.3-6.20100122
+- smi-1.7.3-pixmapprivate.patch: Update for new ABI.
+
+* Wed Oct 27 2010 Adam Jackson <ajax@redhat.com> 1.7.3-5.20100122
+- Add ABI requires magic (#542742)
+
+* Mon Jul 05 2010 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.3-4.20100122
+- rebuild for X Server 1.9
+
+* Fri Jan 22 2010 Peter Hutterer <peter.hutterer@redhat.com> 1.7.3-3.20100122
+- Today's git snapshot
+
+* Thu Jan 21 2010 Peter Hutterer <peter.hutterer@redhat.com> - 1.7.3-2
+- Rebuild for server 1.8
 
 * Wed Aug 05 2009 Dave Airlie <airlied@redhat.com> 1.7.3-1
 - smi 1.7.3
