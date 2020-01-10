@@ -4,8 +4,8 @@
 
 Summary:    Xorg X11 siliconmotion video driver
 Name:       xorg-x11-drv-siliconmotion
-Version:    1.7.7
-Release:    9%{?dist}
+Version:    1.7.8
+Release:    1%{?dist}
 URL:        http://www.x.org
 License:    MIT
 Group:      User Interface/X Hardware Support
@@ -13,8 +13,6 @@ Group:      User Interface/X Hardware Support
 Source0:    ftp://ftp.x.org/pub/individual/driver/%{tarball}-%{version}.tar.bz2
 Source2:    make-git-snapshot.sh
 Source3:    commitid
-
-Patch0: 0001-Remove-miInitializeBackingStore.patch
 
 ExcludeArch: s390 s390x
 
@@ -28,7 +26,6 @@ X.Org X11 siliconmotion video driver.
 
 %prep
 %setup -q -n %{tarball}-%{version}
-%patch0 -p1
 
 %build
 autoreconf -f -v --install || exit 1
@@ -53,6 +50,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man4/siliconmotion.4*
 
 %changelog
+* Wed Nov 11 2015 Adam Jackson <ajax@redhat.com> 1.7.8-1
+- siliconmotion 1.7.8
+
 * Mon Apr 28 2014 Adam Jackson <ajax@redhat.com> - 1.7.7-9
 - Fix rhel arch list
 
